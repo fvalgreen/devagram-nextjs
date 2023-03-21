@@ -8,21 +8,33 @@ import { UsuarioModel } from "@/models/UsuarioModel";
 const pesquisaEndpoint = async (req: NextApiRequest, res: NextApiResponse<RespostaPadraoMsg | any[]>) => {
     try {
         if(req.method === "GET"){
-            const {filtro} = req.query;
+            if(req?.query?.id){
+                const usuariosEncontrado = await UsuarioModel.findById(req?.query?.id);
+                usuariosEncontrado.senha = null;
+                if(!usuariosEncontrado){
+                    return res.status(400).json({erro: 'Usuário não encontrado'})
+                }
+                return res.status(200).json(usuariosEncontrado);
+            }else{
+                const {filtro} = req.query;
 
-            if(!filtro || filtro.length < 2){
-                return res.status(400).json({erro: 'Favor informar pelo menos 2 caracteres para a busca'})
+                if(!filtro || filtro.length < 2){
+                    return res.status(400).json({erro: 'Favor informar pelo menos 2 caracteres para a busca'})
+                }
+
+                const usuariosEncontrados = await UsuarioModel.find({ 
+                    $or: [
+                        {nome : {$regex : filtro, $options: 'i'}}, 
+                        {email : {$regex : filtro, $options: 'i'}}
+                    ]
+                    
+                });
+
+                return res.status(200).json(usuariosEncontrados) ;
             }
 
-            const usuariosEncontrados = await UsuarioModel.find({ 
-                $or: [
-                    {nome : {$regex : filtro, $options: 'i'}}, 
-                    {email : {$regex : filtro, $options: 'i'}}
-                ]
-                
-            });
 
-            return res.status(200).json(usuariosEncontrados) ;
+            
 
         }
         
