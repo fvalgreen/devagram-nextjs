@@ -5,7 +5,7 @@ import { conectarMongoDB } from "@/middlewares/conectarMongoDB";
 import { PublicacaoModel } from "@/models/PublicacaoModel";
 import {UsuarioModel} from "../../models/UsuarioModel"
 
-const likeEndpoint = async (req: NextApiRequest, res: NextApiResponse) => {
+const likeEndpoint = async (req: NextApiRequest, res: NextApiResponse<RespostaPadraoMsg>) => {
     try {
         if(req.method === 'PUT'){
             // Id da publicação
@@ -19,12 +19,12 @@ const likeEndpoint = async (req: NextApiRequest, res: NextApiResponse) => {
             const {userID} = req?.query;
             const usuario = await UsuarioModel.findById(userID);
             usuario.senha = null;
-            console.log(usuario)
+            
             if(!usuario){
                 return res.status(400).json({erro: 'Usuário não encontrada'})
             }
             const indexDoUsuarioNoLike = publicacao.likes.findIndex((e : any) => e.toString() === usuario._id.toString());
-            console.log(indexDoUsuarioNoLike)
+            
             if(indexDoUsuarioNoLike != -1){
                 publicacao.likes.splice(indexDoUsuarioNoLike, 1);
                 await PublicacaoModel.findByIdAndUpdate({_id: publicacao._id}, publicacao)
