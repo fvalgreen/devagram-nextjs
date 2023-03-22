@@ -8,7 +8,7 @@ import { upload, uploadImagemCosmic } from "../../services/uploadImagemCosmic";
 import nc from "next-connect";
 
 const handler = nc()
-  .use(upload.single("file"))
+  .use(upload.single('file'))
   .post(
     async (req: NextApiRequest, res: NextApiResponse<RespostaPadraoMsg>) => {
       try {
