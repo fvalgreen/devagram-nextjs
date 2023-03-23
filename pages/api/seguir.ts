@@ -6,6 +6,7 @@ import { PublicacaoModel } from "@/models/PublicacaoModel";
 import {UsuarioModel} from "../../models/UsuarioModel"
 import { json } from "stream/consumers";
 import { SeguidorModel } from "@/models/SeguidorModel";
+import { politicaCORS } from "@/middlewares/politicaCORS";
 
 const seguirEndpoint = async (req: NextApiRequest, res: NextApiResponse<RespostaPadraoMsg>) => {
     try {
@@ -50,4 +51,4 @@ const seguirEndpoint = async (req: NextApiRequest, res: NextApiResponse<Resposta
     }
 }
 
-export default validarTokenJWT(conectarMongoDB(seguirEndpoint));
+export default politicaCORS(validarTokenJWT(conectarMongoDB(seguirEndpoint)));
