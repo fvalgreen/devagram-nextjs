@@ -54,7 +54,7 @@ const handler =
         }        
 });
 
-export const config = { // Passa uma configuração para o NEXT não transformar a resposta em JSON
+export const config = {  // Passa uma configuração para o NEXT não transformar a resposta em JSON e enviar a request como FormData devido a estarmos passando um arquivo
     api : {
         bodyParser : false
     }
