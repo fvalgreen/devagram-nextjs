@@ -1,34 +1,33 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { validarTokenJWT } from "@/middlewares/validarTokenJWT";
-import { conectarMongoDB } from "@/middlewares/conectarMongoDB";
-import type { RespostaPadraoMsg } from "@/types/RespostaPadraoMsg";
-import { UsuarioModel } from "@/models/UsuarioModel";
-import nc from "next-connect";
-import { upload, uploadImagemCosmic } from "@/services/uploadImagemCosmic";
-import { politicaCORS } from "@/middlewares/politicaCORS";
+import nc from "next-connect";  // Request, Response e Handler padrão do Next
+import { validarTokenJWT } from "@/middlewares/validarTokenJWT"; // Importando o middleware de validação do token JWT criado
+import { conectarMongoDB } from "@/middlewares/conectarMongoDB"; // Importando o middleware de conexão com DB que foi criado
+import { politicaCORS } from "@/middlewares/politicaCORS"; // Importando o middleware de CORS que criamos
+import type { RespostaPadraoMsg } from "@/types/RespostaPadraoMsg"; // Importando o tipo de resposta padrão que criamos
+import { UsuarioModel } from "@/models/UsuarioModel"; // Importando o model do Usuário
+import { upload, uploadImagemCosmic } from "@/services/uploadImagemCosmic"; // Importando as funções que criamos para utilização do Cosmic e Mutler
 
-const handler = nc().use(upload.single('file')).put( async (req: any, res: NextApiResponse<RespostaPadraoMsg>) =>{
+const handler = nc() // Utilizando o nc do Next Connect que serve para "gerenciar" as requisições e resposta HTTP
+.use(upload.single('file')) // utiliza o Multer para fazer upload de um único arquivo
+.put( // Utiliza o método PUT do NC para atualizar os dados do usuário
+  async (req: any, res: NextApiResponse<RespostaPadraoMsg>) =>{
   try {
-    const {userID} = req?.query;
-    const usuario = await UsuarioModel.findById(userID);
+    const {userID} = req?.query;  // Usando um destructor cria uma constante userID com a propriedade userID que vem no query da request se a request existe
+    const usuario = await UsuarioModel.findById(userID); // Busca no Banco de Dados o usuário pelo id
 
-    if(!usuario){
+    if(!usuario){ // Caso a busca não retorne um usuário retorna um erro de usuário não encontrado
       return res.status(400).json({erro: 'Usuário não encontrado'})
     };
 
-    const {nome} = req.body;
-    if(nome && nome.length > 2){
+    const {nome} = req.body; // Usando um destructor cria uma constante nome com a propriedade nome que vem no query
+    if(nome && nome.length > 2){ // Caso o nome exista no corpo da request e tenha mais de 2 caracteres nós atribuimos o valor a propriedade nome do usuário
       usuario.nome = nome;
     };
 
-    const {file} = req;
-    if(file && file.originalname){
-      const image = await uploadImagemCosmic(req);
-      console.log(image.media.url)
-      console.log(image.media)
-      console.log(image)
-      if(image && image.media && image.media.url){
-        console.log("ok")
+    const {file} = req;  // Usando um destructor cria uma constante file com a propriedade file que vem no request
+    if(file && file.originalname){ // Verifica se há algum file e se há um originalname no file
+      const image = await uploadImagemCosmic(req); // Utiliza o upload do cosmic para colocar a imagem no bucket
+      if(image && image.media && image.media.url){  
         usuario.avatar = image.media.url;
       }
       
