@@ -31,6 +31,10 @@ const pesquisaEndpoint = async (req: NextApiRequest, res: NextApiResponse<Respos
                     
                 });
 
+                usuariosEncontrados.forEach(userFound => {
+                    userFound.senha = null
+                });
+
                 return res.status(200).json(usuariosEncontrados) ; // Retorna os usuário encontrados pelo DB
             }
 
