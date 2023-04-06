@@ -27,7 +27,26 @@ const feedEndPoint = async (
         const publicacoes = await PublicacaoModel.find({
           idUsuario: usuario._id,
         }).sort({ data: -1 }); // Busca na DB todas as publicações que contenham o ID do usuário passado ordenando decrescente de data
-        return res.status(200).json(publicacoes); // Retorna um JSON com todas as publicações do usuário solicitado
+        const result = [];
+
+        for (const publicacao of publicacoes) {
+          // Para cada elemento dentro de publicacoes
+          const usuarioDaPublicacao = await UsuarioModel.findById(
+            publicacao.idUsuario
+          ); // Buscamos na DB qual o usuário fez a publicação pelo ID dele
+          if (usuarioDaPublicacao) {
+            // Caso retorne um usuário nós criaremos um objeto para armazenar a publicação com o usuário que a criou
+            const final = {
+              ...publicacao._doc, // Pega cada par chave-valor que está em publicacao._doc e armazena no JSON
+              usuario: { // Guarda os dados do usuário
+                nome: usuarioDaPublicacao.nome,
+                avatar: usuarioDaPublicacao.avatar,
+              },
+            };
+            result.push(final); // Realiza um push no result colocando todas as publicações formatadas no array
+          }
+        }
+        return res.status(200).json(result); // Retorna um JSON com todas as publicações do usuário solicitado
       } else {
         // Caso não seja passado ID nenhum será exibido as publicações de quem o usuário segue
         const { userID } = req.query; // Utiliza um destructor para pegar um campo "userID" da query do request
