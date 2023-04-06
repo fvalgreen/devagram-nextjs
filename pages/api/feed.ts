@@ -72,7 +72,7 @@ const feedEndPoint = async (
           }
         }
 
-        return res.status(200).json({ result }); // Retorna o Array criado com todas as publicações
+        return res.status(200).json(result); // Retorna o Array criado com todas as publicações
       }
     }
     return res.status(405).json({ erro: "Método informado não é válido" });
