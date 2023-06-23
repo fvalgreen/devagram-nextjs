@@ -18,9 +18,7 @@ const endpointLogin = async (
 
   if (req.method === "POST") { // Verifica se o método HTTP é POST, caso não seja retorna um erro de método inválido
     const { login, senha } = req.body; // Usando um destructor pega as propriedades login e senha do corpo da requisição
-    if(!login || !senha){
-      return res.status(400).json({erro: "Login ou Senha não informado"})
-    }
+    
     const usuariosEncontrados = await UsuarioModel.find({ // Procura na base de dados o usuário passando um JSON com email(login) e senha. Criptografando a senha, para evitar de trafegar a senha do usuário sem criptografia
       email: login,
       senha: md5(senha),
@@ -36,7 +34,7 @@ const endpointLogin = async (
         token,
       });
     }
-    return res.status(405).json({ erro: "Usuário ou senha não encontrado" }); // Caso a DB não retorne nada e/ou o retorno seja vazio um erro de usuário e senha não encontrado é retornado
+    return res.status(404).json({ erro: "Usuário ou senha não encontrado" }); // Caso a DB não retorne nada e/ou o retorno seja vazio um erro de usuário e senha não encontrado é retornado
   }
   return res.status(405).json({ erro: "Metodo informado não é válido" });
 };
