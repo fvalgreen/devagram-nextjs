@@ -13,6 +13,7 @@ if (BUCKET_SLUG && READ_KEY) {
 
   var upload = multer({ storage: storage });
 
+  
   var uploadImagemCosmic = async (req: any) => {
     if (req?.file?.originalname) {
       if (
