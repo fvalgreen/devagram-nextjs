@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@cosmicjs/sdk": "^1.0.9",
     "@types/jsonwebtoken": "^9.0.1",
     "@types/md5": "^2.3.2",
     "@types/node": "18.15.3",
