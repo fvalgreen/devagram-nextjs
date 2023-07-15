@@ -7,6 +7,7 @@ import { politicaCORS } from "@/middlewares/politicaCORS"; // Importando o middl
 import { PublicacaoModel } from "@/models/PublicacaoModel"; // Importando o model da Publicação
 import {UsuarioModel} from "../../models/UsuarioModel"; // Importando o model do Usuário
 import { SeguidorModel } from "@/models/SeguidorModel"; // Importando o model do Seguidor
+import { NotificacaoModel } from "@/models/NotificacaoModel";
 
 const seguirEndpoint = async (req: NextApiRequest, res: NextApiResponse<RespostaPadraoMsg>) => { // Declaração padrão conforme os outros endpoints
     try {
@@ -44,6 +45,17 @@ const seguirEndpoint = async (req: NextApiRequest, res: NextApiResponse<Resposta
                 usuarioASerSeguido.seguidores++; // Adiciona 1 ao seguidores no usuário a ser seguido
                 await UsuarioModel.findByIdAndUpdate({_id: usuarioLogado._id}, usuarioLogado); // Atualiza o usuário logado na DB
                 await UsuarioModel.findByIdAndUpdate({_id: usuarioASerSeguido._id}, usuarioASerSeguido); // Atualiza o usuário a ser seguido na DB
+
+                const NotificacaoCriada = {
+                    usuarioAcao: usuarioLogado._id,
+                    usuarioNotificado: usuarioASerSeguido._id,
+                    tipo: "seguir",
+                    dataNotificacao: Date.now(),
+                    visualizada: false
+                }
+    
+                await NotificacaoModel.create(NotificacaoCriada);
+
                 return res.status(200).json({msg: 'Usuário seguido com sucesso'}); // Retorna uma mensagem de sucesso
             };
        }

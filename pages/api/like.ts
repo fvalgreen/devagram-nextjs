@@ -5,6 +5,7 @@ import { conectarMongoDB } from "@/middlewares/conectarMongoDB"; // Importando o
 import type { RespostaPadraoMsg } from "@/types/RespostaPadraoMsg"; // Importando o tipo de resposta padrão que criamos
 import { PublicacaoModel } from "@/models/PublicacaoModel"; // Importando o model da Publicação
 import { UsuarioModel } from "../../models/UsuarioModel" // Importando o model do Usuário
+import { NotificacaoModel } from "@/models/NotificacaoModel";
 
 const likeEndpoint = async (req: NextApiRequest, res: NextApiResponse<RespostaPadraoMsg>) => { // Declaração padrão conforme os outros endpoints
     try {
@@ -33,6 +34,18 @@ const likeEndpoint = async (req: NextApiRequest, res: NextApiResponse<RespostaPa
             } else {
                 publicacao.likes.push(usuario._id); // Caso a verificação retorne -1 significa que não foi encontrado o id do usuário no Array daí usamos o método push para adicionar o id do usuário no fim do Array likes
                 await PublicacaoModel.findByIdAndUpdate({ _id: publicacao._id }, publicacao); // Atualizamos a publicação no banco de dados
+
+                const NotificacaoCriada = {
+                    usuarioAcao: userID,
+                    usuarioNotificado: publicacao.idUsuario,
+                    publicacao: publicacao._id,
+                    tipo: "curtida",
+                    dataNotificacao: Date.now(),
+                    visualizada: false
+                }
+
+                await NotificacaoModel.create(NotificacaoCriada);
+
                 return res.status(200).json({ msg: 'Publicação curtida com sucesso' }); // Retorna uma msg de publicação curtida
             }
 

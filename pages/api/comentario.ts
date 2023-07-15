@@ -6,6 +6,7 @@ import { SeguidorModel } from "@/models/SeguidorModel"; // Importando o model do
 import { validarTokenJWT } from "@/middlewares/validarTokenJWT"; // Importando o middleware de validação do token JWT criado
 import { conectarMongoDB } from "@/middlewares/conectarMongoDB"; // Importando o middleware de conexão com DB que foi criado
 import { politicaCORS } from "@/middlewares/politicaCORS"; // Importando o middleware de CORS que criamos
+import { NotificacaoModel } from "@/models/NotificacaoModel";
 
 const comentarioEndpoint = async (req: NextApiRequest, res: NextApiResponse<RespostaPadraoMsg>)=>{
     try {
@@ -35,6 +36,18 @@ const comentarioEndpoint = async (req: NextApiRequest, res: NextApiResponse<Resp
             }
             publicacao.comentarios.push(comentario); // Fazemos um push do objeto Comentário criado dentro da propriedade comentarios da publicação
             await PublicacaoModel.findByIdAndUpdate({_id: publicacao._id}, publicacao); // Atualiza os dados da publicação através do findByIdAndUpdate
+
+            const NotificacaoCriada = {
+                usuarioAcao: userID,
+                usuarioNotificado: publicacao.idUsuario,
+                publicacao: publicacao._id,
+                tipo: "comentário",
+                dataNotificacao: Date.now(),
+                visualizada: false
+            }
+
+            await NotificacaoModel.create(NotificacaoCriada);
+
             return res.status(200).json({msg: 'Comentário adicionado com sucesso'}) // Retorna uma mensagem de sucesso
 
         }
