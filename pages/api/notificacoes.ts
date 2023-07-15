@@ -29,10 +29,27 @@ const notificacoes = async (
 
     const retorno = {
       novas: notificacoesNovas,
-      visualizadas: notificacoesVisualizadas      
-    }
+      visualizadas: notificacoesVisualizadas,
+    };
 
     return res.status(200).json(retorno);
+  } else if (req.method === "PUT") {
+    const { userID } = req.query;
+
+    const notificacoes = await NotificacaoModel.find({
+      usuarioNotificado: userID,
+    });
+
+    console.log(notificacoes)
+    notificacoes.map(async (notificacao: any) => {
+      if (notificacao.visualizada == false) {
+        notificacao.visualizada = true;
+        await NotificacaoModel.findByIdAndUpdate({_id: notificacao._id}, notificacao)
+      }
+    });
+
+
+    return res.status(200).json({ msg: "Notificacóes visualizadas" });
   } else {
     return res.status(405).json({ msg: "Método inválido" });
   }
