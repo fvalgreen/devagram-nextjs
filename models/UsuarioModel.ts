@@ -9,6 +9,7 @@ const UsuarioSchema = new Schema({
   seguidores: { type: Number, default: 0 }, // Guarda o número de seguidores do usuário e é criado por padrão com o valor 0
   seguindo: { type: Number, default: 0 }, // Guarda o número de seguindo do usuário e é criado por padrão com o valor 0
   publicacoes: { type: Number, default: 0 }, // Guarda a quantidade de publicações que o usuário fez
+  stories: { type: Number, default: 0 }, // Guarda a quantidade de stories que o usuário fez
 });
 
 export const UsuarioModel =
