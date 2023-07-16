@@ -1,3 +1,4 @@
+import moment from "moment";
 import { conectarMongoDB } from "@/middlewares/conectarMongoDB";
 import { politicaCORS } from "@/middlewares/politicaCORS";
 import { validarTokenJWT } from "@/middlewares/validarTokenJWT";
@@ -27,9 +28,29 @@ const notificacoes = async (
       }
     });
 
+    const notificacoesSeteDias: any[] = [];
+    const notificacoesTrintaDias: any[] = [];
+
+    notificacoesVisualizadas.map(async (notificacao: any) => {
+      const seteDias = moment(moment().subtract(7, "days")).toISOString();
+      const trintaDias = moment(moment().subtract(30, "days")).toISOString();
+      const notificacaoData = moment(notificacao.dataNotificacao).format();
+      const date = moment(notificacaoData).diff(seteDias);
+      if (moment(notificacaoData).diff(seteDias) > 0) {
+        notificacoesSeteDias.push(notificacao);
+      } else {
+        if (moment(notificacaoData).diff(trintaDias) > 0) {
+          notificacoesTrintaDias.push(notificacao);
+        }else {
+          await NotificacaoModel.findByIdAndDelete({_id: notificacao._id}) // Apagando a notificaçao do Banco de Dados após 30 dias para não popular a DB
+        }
+      }
+    });
+
     const retorno = {
       novas: notificacoesNovas,
-      visualizadas: notificacoesVisualizadas,
+      ultimosSeteDias: notificacoesSeteDias,
+      ultimosTrintaDias: notificacoesTrintaDias,
     };
 
     return res.status(200).json(retorno);
@@ -40,14 +61,16 @@ const notificacoes = async (
       usuarioNotificado: userID,
     });
 
-    console.log(notificacoes)
+    console.log(notificacoes);
     notificacoes.map(async (notificacao: any) => {
       if (notificacao.visualizada == false) {
         notificacao.visualizada = true;
-        await NotificacaoModel.findByIdAndUpdate({_id: notificacao._id}, notificacao)
+        await NotificacaoModel.findByIdAndUpdate(
+          { _id: notificacao._id },
+          notificacao
+        );
       }
     });
-
 
     return res.status(200).json({ msg: "Notificacóes visualizadas" });
   } else {
