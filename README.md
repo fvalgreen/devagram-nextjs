@@ -4,7 +4,7 @@ Projeto desenvolvido em Typescript para estudo do Next na formação da Devaria 
 
 ## Implementação na Vercel
 
-[Devagram](https://devagram-node-nextjs-wheat.vercel.app/)
+- API: [Devagram](https://devagram-node-nextjs-wheat.vercel.app/)
 
 ### Tecnologias Utilizadas
 
