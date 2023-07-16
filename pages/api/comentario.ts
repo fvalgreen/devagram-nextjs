@@ -49,6 +49,8 @@ const comentarioEndpoint = async (
         publicacao
       ); // Atualiza os dados da publicação através do findByIdAndUpdate
 
+      // Colocar lógica para que o usuário não gere notificação para si mesmo
+
       const date = Date.now();
 
       const NotificacaoCriada = {

@@ -63,31 +63,17 @@ const handler = nc()
         var storiesAtuais: any = [];
 
         stories.map(async (storie: any, index: number) => {
-          const seteDias = moment(moment().subtract(7, "days")).toISOString();
+          const umDia = moment(moment().subtract(1, "days")).toISOString();
           const storieData = moment(storie.data).format();
-          const date = moment(storieData).diff(seteDias);
+          const date = moment(storieData).diff(umDia);
           if (date < 0) {
             await StoriesModel.findOneAndDelete({ _id: storie._id }); // Apagando stories que tenham mais de 7 dias para não ocupar muito o bucket
           } else {
             storiesAtuais.push(storie);
           }
-        });
-        const result = [];
-        for (const storie of storiesAtuais) {
-          const usuarioDoStorie = await UsuarioModel.findById(storie.idUsuario);
-          if (usuarioDoStorie) {
-            const final = {
-              ...storie._doc,
-              usuario: {
-                nome: usuarioDoStorie.nome,
-                avatar: usuarioDoStorie.avatar,
-              },
-            };
-            result.push(final);
-          }
-        }
+        });        
 
-        return res.status(200).json(result);
+        return res.status(200).json(storiesAtuais);
       } else {
         const { userID } = req.query;
         const usuarioLogado = await UsuarioModel.findById(userID);
@@ -106,9 +92,9 @@ const handler = nc()
         var storiesAtuais: any = [];
 
         stories.map(async (storie: any, index: number) => {
-          const seteDias = moment(moment().subtract(7, "days")).toISOString();
+          const umDia = moment(moment().subtract(1, "days")).toISOString();
           const storieData = moment(storie.data).format();
-          const date = moment(storieData).diff(seteDias);
+          const date = moment(storieData).diff(umDia);
           if (date < 0) {
             await StoriesModel.findOneAndDelete({ _id: storie._id }); // Apagando stories que tenham mais de 7 dias para não ocupar muito o bucket
           } else {
