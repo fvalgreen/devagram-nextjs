@@ -10,9 +10,11 @@ Projeto desenvolvido em Typescript para estudo do Next na formação da Devaria 
 
 - Nextjs 13.2.4
 - Node 18.15.0
+- Mongoose 7.0.2
 - CosmicJS/sdk 1.0.9
 - JsonWebToken 9.0.0
 - Multer 1.4.5
+- Moment 2.29.4
 
 ### Configuração do ambiente de desenvolvimento
 
