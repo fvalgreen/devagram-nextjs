@@ -78,6 +78,7 @@ const feedEndPoint = async (
           const usuarioDaPublicacao = await UsuarioModel.findById(
             publicacao.idUsuario
           ); // Buscamos na DB qual o usuário fez a publicação pelo ID dele
+          
           if (usuarioDaPublicacao) {
             // Caso retorne um usuário nós criaremos um objeto para armazenar a publicação com o usuário que a criou
             const final = {
